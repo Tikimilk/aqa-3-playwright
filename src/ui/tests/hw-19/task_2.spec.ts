@@ -15,8 +15,6 @@ test("[UI]check Dynamic Controls page", async ({ page }) => {
     await page.locator("#passwordinput").fill("12345678");
     await page.getByRole("button", { name: "Login" }).click()
 
-    await expect(page.locator("#spinner")).toBeHidden();
-
 
     await expect(page.getByRole('link', { name: 'Anatoly' })).toContainText("Anatoly");
     await expect(page.locator(".spinner-border")).toHaveCount(0, {timeout: 10000});
