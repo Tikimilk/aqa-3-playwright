@@ -10,8 +10,9 @@
 //   - завалидировать сумму
 
 
-import { test, expect, Page } from '@playwright/test';
-enum Promocodes {
+  import { test, expect, Page } from '@playwright/test';
+
+  enum Promocodes {
     DISCOUNT20 = "HelloThere",
     DISCOUNT15 = "15-PERCENT-FOR-CSS",
     DISCOUNT10 = "HOT-COURSE",
@@ -20,28 +21,28 @@ enum Promocodes {
     DISCOUNT7 = "JAVA-FOR-BOOMERS",
     DISCOUNT5 = "5-PERCENT-FOR-UTILS",
   }
+  
   const products = [
     'Product 2',
     'Product 4',
     'Product 6',
     'Product 8',
     'Product 10',
-  ]
-
+  ];
+  
   test.describe('[UI] Shopping Cart', () => {
     test('Checkout with 5 products and promo codes', async ({ page }) => {
       // Шаг 1: Перейти на страницу
       await page.goto('https://anatoly-karpovich.github.io/demo-shopping-cart/');
   
       // Шаг 2: Добавить продукты 2, 4, 6, 8, 10
-      const products = ['Product 2', 'Product 4', 'Product 6', 'Product 8', 'Product 10'];
       for (const product of products) {
         await page
           .locator('div.card-body')
           .filter({ hasText: product })
           .getByRole('button', { name: 'Add to card' })
           .click();
-        await page.waitForSelector('#badge-number'); 
+        await page.waitForSelector('#badge-number');
       }
   
       // Шаг 3: Проверить бейдж (должно быть 5 товаров)
@@ -63,7 +64,13 @@ enum Promocodes {
   
       // Шаг 7: Проверить итоговую сумму после скидок
       const totalPriceText = await page.locator('#total-price').textContent();
-      const totalPrice = parseFloat(totalPriceText?.replace('$', '') || '0');
+      if (!totalPriceText) {
+        throw new Error('Total price text is undefined or null');
+      }
+      const totalPrice = parseFloat(totalPriceText.replace('$', ''));
+      if (isNaN(totalPrice)) {
+        throw new Error('Failed to parse total price');
+      }
   
       // Шаг 8: Завершить покупку
       await page.locator('#continue-to-checkout-button').click();
